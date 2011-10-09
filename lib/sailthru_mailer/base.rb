@@ -48,13 +48,32 @@ module SailthruMailer
       self.class.connection.deliver(
         self.template, 
         self.all_recipients,
-        self.vars,
+        self.formatted_vars,
         self.formatted_options,
         (self.date || Time.now).utc.to_s
       )
     end
-    
+    # formatted variable hash, ready for JSON encoding
+    def formatted_vars
+      {}.tap do |ret|
+        self.vars.each_pair do |k,v|
+          ret[k] = self.prep_for_json(v)
+        end
+      end
+    end
     protected
+    # prepare a value to be converted to JSON
+    def prep_for_json(val)
+      val = val.collect{|v| self.prep_for_json(v)} if val.is_a?(Array)
+      # recursive call for hashes
+      if val.is_a?(Hash)
+        val.each_pair{|k,v| val[k] = self.prep_for_json(v)} 
+      # otherwise try to convert to a hash (e.g. ActiveModel)
+      elsif val.respond_to?(:to_hash)
+        val = self.prep_for_json(val.to_hash)
+      end
+      val
+    end
     # get the options for this send
     def formatted_options
       {}.tap do |ret|

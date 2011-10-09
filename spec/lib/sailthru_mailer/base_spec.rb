@@ -1,7 +1,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
 describe SailthruMailer::Base do
-  context "Sending Mail" do
+  context "Sending Mail With Stubs" do
     before(:all) do
       TestMailer = Class.new(SailthruMailer::Base) 
       TestMailer.class_eval do
@@ -21,7 +21,19 @@ describe SailthruMailer::Base do
     end
     it "should include any data set for the body of the email in the feed" do
       m = TestMailer.my_mail(:abc => "123")
-      m.vars.should eql({:x => "y", :abc => "123"})
+      m.formatted_vars.should eql({:x => "y", :abc => "123"})
+    end
+    it "should call to_hash on objects in the body if necessary" do
+      MyObject = Class.new do
+        def to_hash
+          {
+            :k => "v",
+            :arr => ["one", "two", "three"]
+          }
+        end
+      end
+      m = TestMailer.my_mail(:user => MyObject.new)
+      m.formatted_vars.should eql({:x => "y", :user => {:k => "v", :arr => ["one", "two", "three"]}})
     end
     it "should include default to/from addresses" do
       TestMailer.class_eval do
