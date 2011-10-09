@@ -109,8 +109,9 @@ module SailthruMailer
       
       protected
       # just here to give us nicer syntax
-      def defaults(&block)
-        instance_exec(&block)
+      def defaults(vals = nil, &block)
+        return instance_exec(&block) if block_given?
+        vals.each_pair{|k,v| self.send(k, v)}
       end
       # if this is a valid public instance method, we proceed
       def method_missing(m, *args, &block)

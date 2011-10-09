@@ -44,6 +44,12 @@ describe SailthruMailer::Base do
       end
       TestMailer.my_mail.from.should eql("test@tester.com")
       TestMailer.complex_mail("dan@lifebooker.com").from.should eql("super-secret-address@test.net")
+      
+      TestMailer.class_eval do
+        defaults(:from => "test2@tester.com")
+      end
+      TestMailer.my_mail.from.should eql("test2@tester.com")
+      
     end
     it "should send a request to sailthru" do
       t = Time.now.utc
