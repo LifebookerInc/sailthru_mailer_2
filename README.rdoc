@@ -1,8 +1,57 @@
-= am_sailthru
+= Sailthru Mailer
 
-Description goes here.
+An adapter that allows the usage of ActionMailer 3 syntax with Sailthru's Ruby Client Library
 
-== Contributing to am_sailthru
+
+== Installation
+
+  gem install sailthru_mailer
+  rails g sailthru_mailer
+
+This will generate an initializer in which you can put your api_key and api_secret.  E.g.
+
+  # Rails.root/config/initializers/sailthru_mailer.rb
+  SailthruMailer.settings = {
+    :api_key => "MYKEY",
+    :api_secret => "MYSECRET",
+    :api_url => "https://api.sailthru.com"
+  }
+  
+== Usage
+
+This gem is designed as a drop-in replacement for ActionMailer.  You should be able to just replace all instances
+of ActionMailer::Base with SailthruMailer::Base
+
+== Under the Hood
+
+There are some differences between the way ActionMailer and Sailthru work.  ActionMailer provides use a Mail::Message, which is 
+basically just an email (headers and body) that has been through AbstractController's rendering engine.
+
+Sailthru has us place templates within their system and provide a template name, email address(es) and variables that go within the email.
+We account for this by allowing you to name each method after a template and supply the variables within the body hash.  #to_hash is called
+on any objects in the body
+
+  # Rails.root/app/models/user.rb
+  class User < ActiveRecord::Base
+    # attributes: first_name, last_name, email
+  end
+
+  # Rails.root/app/mailers/my_mailer.rb
+  class MyMailer < SailthruMailer
+    def sailthru_template_name(user)
+      to(user.email) # aliased as recipients(user.email)
+      body[:user] = user
+    end
+  end
+  
+  MyMailer.sailthru_template_name("dan@lifebooker.com", User.first).deliver
+  
+This will send a request to Sailthru:
+
+  sailthru.send(:sailthru_template_name, "dan@lifebooker.com", {:user => {:first_name => "Dan", :last_name => "Langevin", :email => "dan.langevin@lifebooker.com"}}, {} #additional options, Time.now.utc.to_s #send date)
+
+
+== Contributing to Sailthru Mailer
  
 * Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet
 * Check out the issue tracker to make sure someone already hasn't requested it and/or contributed it
