@@ -17,6 +17,30 @@ This will generate an initializer in which you can put your api_key and api_secr
     :api_url => "https://api.sailthru.com"
   }
   
+== Setting Defaults
+
+SailthruMailer supports the per-mailer configuration that ActionMailer provides.
+
+  class MyMailer < SailthruMailer::Base
+    defaults(:from => "lifebooker@lifebooker.com", :reply_to => "no-reply@lifebooker.com")
+  end
+  
+We also provide a (nicer) interface within a defaults block
+
+  class MyMailer < SailthruMailer::Base
+    defaults do
+      from("lifebooker@lifebooker.com")
+      reply_to("no-reply@lifebooker.com")
+    end
+  end
+  
+Or even outside of the defaults block (the block is just syntactic sugar)
+  
+  class MyMailer < SailthruMailer::Base
+    from("lifebooker@lifebooker.com")
+    reply_to("no-reply@lifebooker.com")
+  end
+  
 == Usage
 
 This gem is designed as a drop-in replacement for ActionMailer.  You should be able to just replace all instances
@@ -26,6 +50,8 @@ of ActionMailer::Base with SailthruMailer::Base
 
 There are some differences between the way ActionMailer and Sailthru work.  ActionMailer provides use a Mail::Message, which is 
 basically just an email (headers and body) that has been through AbstractController's rendering engine.
+
+== Examples
 
 Sailthru has us place templates within their system and provide a template name, email address(es) and variables that go within the email.
 We account for this by allowing you to name each method after a template and supply the variables within the body hash.  #to_hash is called
@@ -37,19 +63,18 @@ on any objects in the body
   end
 
   # Rails.root/app/mailers/my_mailer.rb
-  class MyMailer < SailthruMailer
+  class MyMailer < SailthruMailer::Base
     def sailthru_template_name(user)
       to(user.email) # aliased as recipients(user.email)
       body[:user] = user
     end
   end
   
-  MyMailer.sailthru_template_name("dan@lifebooker.com", User.first).deliver
+  MyMailer.sailthru_template_name(User.first).deliver
   
 This will send a request to Sailthru:
 
   sailthru.send(:sailthru_template_name, "dan@lifebooker.com", {:user => {:first_name => "Dan", :last_name => "Langevin", :email => "dan.langevin@lifebooker.com"}}, {} #additional options, Time.now.utc.to_s #send date)
-
 
 == Contributing to Sailthru Mailer
  
