@@ -90,6 +90,12 @@ module SailthruMailer
     end
     
     class << self
+      # called when someone inherits from us
+      def inherited(klass)
+        CONFIGURATION_METHODS.each do |m|
+          klass.send(m, self.send(m))
+        end
+      end
       
       def connection(reload = false)
         @connection = nil if reload

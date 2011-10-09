@@ -51,6 +51,18 @@ describe SailthruMailer::Base do
       TestMailer.my_mail.from.should eql("test2@tester.com")
       
     end
+    
+    it "should inherit default options" do
+      ParentMailer = Class.new(SailthruMailer::Base) do
+        defaults do
+          from("test@tester.com")
+        end
+      end
+      ChildMailer = Class.new(ParentMailer)
+      GrandChildMailer = Class.new(ChildMailer)
+      ChildMailer.from.should eql "test@tester.com"
+      GrandChildMailer.from.should eql "test@tester.com"
+    end
     it "should send a request to sailthru" do
       t = Time.now.utc
       Time.stubs(:now).returns(t)
