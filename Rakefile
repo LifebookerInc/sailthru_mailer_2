@@ -14,11 +14,11 @@ require 'rake'
 require 'jeweler'
 Jeweler::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
-  gem.name = "am_sailthru"
-  gem.homepage = "http://github.com/dlangevin/am_sailthru"
+  gem.name = "sailthru_mailer"
+  gem.homepage = "http://github.com/dlangevin/sailthru_mailer"
   gem.license = "MIT"
-  gem.summary = %Q{TODO: one-line summary of your gem}
-  gem.description = %Q{TODO: longer description of your gem}
+  gem.summary = %Q{Wrapper for Sailthru ruby gem}
+  gem.description = %Q{Implements ActionMailer compatible syntax}
   gem.email = "dan.langevin@lifebooker.com"
   gem.authors = ["Dan Langevin"]
   # dependencies defined in Gemfile
@@ -43,7 +43,7 @@ Rake::RDocTask.new do |rdoc|
   version = File.exist?('VERSION') ? File.read('VERSION') : ""
 
   rdoc.rdoc_dir = 'rdoc'
-  rdoc.title = "am_sailthru #{version}"
+  rdoc.title = "sailthru_mailer #{version}"
   rdoc.rdoc_files.include('README*')
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
