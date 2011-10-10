@@ -38,7 +38,6 @@ describe SailthruMailer::Base do
     it "should include default to/from addresses" do
       TestMailer.class_eval do
         defaults do
-          subject("Test")
           from("test@tester.com")
         end
       end

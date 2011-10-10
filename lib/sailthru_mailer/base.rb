@@ -1,8 +1,8 @@
 module SailthruMailer
   class Base
-    CONFIGURATION_METHODS = [
-      :subject, :to, :from, :cc, :bcc, :reply_to, :date
-    ]
+    VALID_CONFIGURATION_METHODS = [:to, :from, :cc, :bcc, :reply_to, :date]
+    DEPRECATED_CONFIGURATION_METHODS = [:subject]
+    CONFIGURATION_METHODS = VALID_CONFIGURATION_METHODS + DEPRECATED_CONFIGURATION_METHODS
     
     # we have accessors for
     attr_accessor :template
@@ -25,6 +25,16 @@ module SailthruMailer
         end
       EOF
     end
+    DEPRECATED_CONFIGURATION_METHODS.each do |m|
+      class_eval <<-EOF, __FILE__, __LINE__ +1
+        def #{m}(val = nil)
+          ::ActiveSupport::Deprecation.warn("#{m} has no effect with Sailthru - please specify it in the Sailthru admin", caller(1))
+          @#{m} = val unless val.nil?
+          @#{m} ||= self.class.#{m}
+        end
+      EOF
+    end
+    
     # alias to as recipients for AM2 compatibility
     alias_method :recipients, :to
     
@@ -92,7 +102,7 @@ module SailthruMailer
     class << self
       # called when someone inherits from us
       def inherited(klass)
-        CONFIGURATION_METHODS.each do |m|
+        VALID_CONFIGURATION_METHODS.each do |m|
           klass.send(m, self.send(m))
         end
       end
@@ -102,9 +112,18 @@ module SailthruMailer
         @connection ||= SailthruMailer::Connection.new
       end
       # configuration options that can be set if a value is provided or gotten otherwise
-      CONFIGURATION_METHODS.each do |m|
+      VALID_CONFIGURATION_METHODS.each do |m|
         class_eval <<-EOF, __FILE__, __LINE__ +1
           def #{m}(val = nil)
+            @#{m} = val unless val.nil?
+            @#{m}
+          end
+        EOF
+      end
+      DEPRECATED_CONFIGURATION_METHODS.each do |m|
+        class_eval <<-EOF, __FILE__, __LINE__ +1
+          def #{m}(val = nil)
+            ::ActiveSupport::Deprecation.warn("#{m} has no effect with Sailthru - please specify it in the Sailthru admin", caller(5))
             @#{m} = val unless val.nil?
             @#{m}
           end
