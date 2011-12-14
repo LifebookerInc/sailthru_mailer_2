@@ -6,7 +6,7 @@ source "http://rubygems.org"
 # Add dependencies to develop your gem here.
 # Include everything needed to run rake, tests, features, etc.
 
-gem "activesupport"
+gem "activesupport", "< 3.0.0"
 gem "i18n"
 gem "sailthru-client", :git => "https://github.com/sailthru/sailthru-ruby-client.git"
 
