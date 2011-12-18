@@ -87,7 +87,8 @@ module SailthruMailer
     # get the options for this send
     def formatted_options
       {}.tap do |ret|
-        ret[:replyto] = self.reply_to unless self.reply_to.blank?
+        ret[:replyto] = self.reply_to if self.reply_to.present?
+        ret[:behalf_email] = self.from if self.from.present?
       end
     end
     # list of all email addresses
