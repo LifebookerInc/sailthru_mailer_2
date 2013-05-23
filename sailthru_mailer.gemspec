@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = "sailthru_mailer"
-  s.version = "1.0.0"
+  s.version = "1.0.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Dan Langevin"]
@@ -16,25 +16,8 @@ Gem::Specification.new do |s|
     "LICENSE.txt",
     "README.rdoc"
   ]
-  s.files = [
-    ".document",
-    ".rspec",
-    "Gemfile",
-    "Gemfile.lock",
-    "Guardfile",
-    "LICENSE.txt",
-    "README.rdoc",
-    "Rakefile",
-    "VERSION",
-    "lib/sailthru_mailer.rb",
-    "lib/sailthru_mailer/base.rb",
-    "lib/sailthru_mailer/connection.rb",
-    "sailthru_mailer.gemspec",
-    "spec/lib/sailthru_mailer/base_spec.rb",
-    "spec/lib/sailthru_mailer_spec.rb",
-    "spec/spec_helper.rb"
-  ]
-  s.homepage = "http://github.com/dlangevin/sailthru_mailer"
+  s.files = Dir["**/*"]
+  s.homepage = "http://github.com/LifebookerInc/sailthru_mailer"
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
   s.rubygems_version = "1.8.10"
