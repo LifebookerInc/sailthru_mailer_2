@@ -149,7 +149,7 @@ module SailthruMailer
       end
       # 
       def action_defined?(m)
-        self.public_instance_methods.include?(m.to_sym)
+        self.public_instance_methods.map(&:to_sym).include?(m.to_sym)
       end
     end
     
